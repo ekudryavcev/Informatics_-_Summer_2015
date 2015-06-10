@@ -1,8 +1,9 @@
 """
 The Predictive
-Version 1.3.1 Dr Who
+Version 1.3.3 Dr Who
 Settings launcher for working with libraries
 """
+
 
 class SETTINGS:
 	name = "Default"
@@ -13,12 +14,12 @@ class LIBRARY:
 	name = "Default"
 	filename = "default.txt"
 	statistics = {}
-	version = "1.3.1"
+	version = "1.3.3"
 	reliability = 0.0
 	maxwords = 1
 	lock = False
 
-def file_restore(lib):
+def restore_file(lib):
 	global libraries
 	global version
 	lib.filename = lib.name + ".libt"
@@ -30,11 +31,12 @@ def file_restore(lib):
 	l.write("\n" + str(lib.statistics))
 	l.close()
 
-version = "1.2.3"
-all_vers = ["1.0.2" , "1.0.3" , "1.1.1" , "1.1.3" , "1.1.4" , "1.1.5" , "1.1.6" , "1.2.0" , "1.2.2" , "1.2.4" , "1.3.0" , "1.3.1"]
+
+version = "1.3.3"
+all_vers = ["1.0.2" , "1.0.3" , "1.1.1" , "1.1.3" , "1.1.4" , "1.1.5" , "1.1.6" , "1.2.0" , "1.2.2" , "1.2.4" , "1.3.0" , "1.3.1" , "1.3.3"]
 lib_def = LIBRARY()
 libraries = [lib_def]
-file_restore(lib_def)
+restore_file(lib_def)
 set_def = SETTINGS()
 set_def.library = lib_def
 settings = set_def
@@ -42,7 +44,7 @@ settings = set_def
 commands_info = {"'help'" : "list of commands" , "'info'" : "current settings information" , "'new_lib'" : "create a new statistics library"}
 commands_info.update({"'libraries'" : "list of existing statistics libraries" , "'change_lib'" : "change current statistics library"})
 commands_info.update({"'quit'" : "stop this console" , "'stop_console'" : "stop this console" , "'close_dialogue'" : "stop this console"})
-commands_info.update({"'new_adid'" : "create a new empty *.adid training file"})
+commands_info.update({"'new_adid'" : "create a new empty *.adid training file" , "'edit_lib'" : "edit statistics library parameters"})
 commands_info.update({"'run_text'" : "run machine learning on a certain text" , "'restore_lib'" : "restore a library from a statistics file"})
 
 def new_lib_dialog():
@@ -53,6 +55,7 @@ def new_lib_dialog():
 	global libraries
 	global LIBRARY
 	global version
+	global all_vers
 	exists = False
 	for lib in libraries:
 		if lib.name == comnd:
@@ -100,7 +103,7 @@ def new_lib_dialog():
 					print("There is no similar command. It may appear in the following versions.")
 				print("new_lib >>>\n")
 				comnd = input()
-		file_restore(new_lib)
+		restore_file(new_lib)
 		print("A new library called '" + new_lib.name + "' is successfuly saved.")
 		return(new_lib)
 
@@ -137,6 +140,68 @@ def word_output(word , libr):
 			best = vr
 	return(best)
 
+def edit_lib():
+	global libraries
+	global yes_no
+	global all_vers
+	print("Input the name of the statistics library or 'libraries' to see the list of libraries.")
+	print("edit_lib >>>\n")
+	comnd = input()
+	key = 1
+	if comnd == "libraries":
+		if libraries == None:
+			print("No libraries yet, but you can create one now.")
+			key = 0
+		else:
+			print("Here is the list of existing statistics libraries:")
+			for lib in libraries:
+				print(lib.name)
+			print("Which library would you like to edit?")
+			print("edit_lib >>>\n")
+			comnd = input()
+			key = 1
+	exists = False
+	if key:
+		for libr in libraries:
+			if libr.name == comnd:
+				print("You may change the version by typing 'version', maximum words with 'maxwords' and lock with 'lock'. Type 'save' or 'quit' to leave this mode.")
+				print("edit_lib >>>\n")
+				comnd = input()
+				while not comnd in {"quit" , "save"}:
+					if comnd == "version":
+						print("You may choose one of the following versions:")
+						print(all_vers)
+						print("Current version is " + version)
+						print("Customizing versions of the libraries is not recommended.")
+						print("edit_lib >>>\n")
+						comnd = input()
+						if comnd in all_vers:
+							libr.version = comnd
+							print("The library version is successfully changed.")
+						else:
+							print("Such version is inavailable.")
+					elif comnd == "maxwords":
+						print("Input the maximum ammount of last words to be analysed.")
+						print("edit_lib >>>\n")
+						libr.maxwords = max(1 , min(7 , int(input())))
+						print("The maximum ammount of words is successfully changed.")
+					elif comnd == "lock":
+						print("Would you like to lock the library so that its statistics didn't change?")
+						print("yes_no >>>\n")
+						if yes_no(input()):
+							libr.lock = True
+							print("The library is now locked.")
+						else:
+							libr.lock = False
+							print("The library is now unlocked.")
+					else:
+						print("There is no similar command. It may appear in the following versions.")
+					print("edit_lib >>>\n")
+					comnd = input()
+				restore_file(libr)
+			exists = True
+		if not exists:
+			print("No library with such name found.")
 
 
 """
@@ -263,7 +328,7 @@ def run_text():
 						didact.extend(line.split())
 					t.close()
 					didaction(didact , libr)
-					file_restore(libr)
+					restore_file(libr)
 					print("The " + libr.name + " library is successfully updated.")
 				except IOError or EOFError:
 					print("There is no appropriate file with such name in the directory. You now will return home.")
@@ -316,6 +381,10 @@ def restore_lib():
 		print("There is no appropriate *.libt file in the directory. You now will return home.")
 
 
+"""
+CONSOLE LAUNCHER:
+"""
+
 def start(command): 
 	global settings
 	global commands_info
@@ -327,7 +396,7 @@ def start(command):
 	global change_lib
 	global new_lib
 	global restore_lib
-	global file_restore
+	global restore_file
 	global run_text
 
 	if command == "help" or command == "Help":
@@ -369,6 +438,10 @@ def start(command):
 
 	elif command == "restore_lib":
 		restore_lib()
+
+	elif command == "edit_lib":
+		edit_lib()
+
 	elif command in {"stop_console" , "close_dialogue" , "quit"}:
 		return(1)
 
