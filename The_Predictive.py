@@ -1,20 +1,22 @@
 """
+========================================================================================================================================
 The Predictive
-Version 1.3.4 Dr Who
+Version 1.4.0.beta "Dr Vendetta Beta"
 Settings launcher for working with libraries
+========================================================================================================================================
 """
-
 
 class SETTINGS:
 	name = "Default"
 	library = None
 	autodidact = True
+	showwords = 5
 
 class LIBRARY:
 	name = "Default"
 	filename = "default.txt"
 	statistics = {}
-	version = "1.3.4"
+	version = "1.3.5"
 	reliability = 0.0
 	maxwords = 1
 	lock = False
@@ -31,8 +33,8 @@ def restore_file(lib):
 	l.close()
 
 
-version = "1.3.4"
-all_vers = ["1.0.2" , "1.0.3" , "1.1.1" , "1.1.3" , "1.1.4" , "1.1.5" , "1.1.6" , "1.2.0" , "1.2.2" , "1.2.4" , "1.3.0" , "1.3.1" , "1.3.3" , "1.3.4"]
+version = "1.4.0.beta"
+all_vers = ["1.0.2" , "1.0.3" , "1.1.1" , "1.1.3" , "1.1.4" , "1.1.5" , "1.1.6" , "1.2.0" , "1.2.2" , "1.2.4" , "1.3.0" , "1.3.1" , "1.3.3" , "1.3.4" , "1.3.5" , "1.4.0.beta"]
 lib_def = LIBRARY()
 libraries = [lib_def]
 restore_file(lib_def)
@@ -43,9 +45,15 @@ builtin_libs = ["Smartby_EN" , "Keyloot_EN" , "Queru_EN" , "Walret_PY"]
 
 commands_info = {"'help'" : "list of commands" , "'info'" : "current settings information" , "'new_lib'" : "create a new statistics library"}
 commands_info.update({"'libraries'" : "list of existing statistics libraries" , "'change_lib'" : "change current statistics library"})
-commands_info.update({"'quit'" : "stop this console" , "'stop_console'" : "stop this console" , "'close_dialogue'" : "stop this console"})
+commands_info.update({"'quit'" : "return back" , "'stop_console'" : "stop this console" , "'close_dialogue'" : "stop this console"})
 commands_info.update({"'new_adid'" : "create a new empty *.adid training file" , "'edit_lib'" : "edit statistics library parameters"})
 commands_info.update({"'run_text'" : "run machine learning on a certain text" , "'restore_lib'" : "restore a library from a statistics file"})
+commands_info.update({"'edit_settings'" : "edit current settings"})
+
+from tkinter import *
+root = Tk()
+buttons = []
+word = " "
 
 def new_lib_dialog():
 	print("Type the name of the new statistics library")
@@ -144,6 +152,72 @@ def word_output(word , libr):
 			best = vr
 	return(best)
 
+def btn_clicked(button , word):
+	global settings
+	global word_output
+	if word in settings.library.statistics:
+		button['text'] = word_output(word, settings.library)
+	else:
+		button['text'] = "..."
+
+def cloth():
+	global word_output
+	global settings
+	global root
+	global buttons
+	global btn_clicked
+	global word
+	for i in range(settings.showwords):
+		new_btn = Button(root)
+		buttons.append(new_btn)
+		new_btn.configure(text="...", command=btn_clicked(new_btn , word))
+
+
+"""
+========================================================================================================================================
+STARTS HERE:
+========================================================================================================================================
+"""
+
+def edit_sets():
+	global libraries
+	global yes_no
+	global settings
+	print("You may change the library by typing 'change_lib', words showed on the bar with 'show_words' and autodidaction with 'lock'. Type 'save' or 'quit' to leave this mode; type 'info' to see current settings.")
+	print("edit_sets >>>\n")
+	comnd = input()
+	while not comnd in {"quit" , "save"}:
+		if comnd == "show_words":
+			print("Input the ammount of words to be offered on the bar.")
+			print("edit_sets >>>\n")
+			try:
+				settings.showwords = max(1 , min(7 , int(input())))
+				print("The ammount of words is successfully changed.")
+			except:
+				print("Inappropriate input.")
+		elif comnd == "lock":
+			print("Would you like to lock autodidaction so that the statistics didn't change?")
+			print("yes_no >>>\n")
+			if yes_no(input()):
+				settings.autodidact = False
+				print("Machine learning is now locked.")
+			else:
+				settings.autodidact = True
+				print("Machine learning is now unlocked.")
+		elif comnd == "info":
+			print("Here is the information about current settings:")
+			print(settings.name)
+			print("Statistics library:" , settings.library.name)
+			print("Statistics reliability:" , str(int(settings.library.reliability * 10000) / 100) + "%")
+			print("Words offered:" , str(settings.showwords))
+			print("Machine learning mode:" , settings.autodidact)
+		elif comnd == "change_lib":
+				change_lib()
+		else:
+			print("There is no similar command. It may appear in the following versions.")
+		print("edit_sets >>>\n")
+		comnd = input()
+
 def edit_lib():
 	global libraries
 	global yes_no
@@ -204,13 +278,8 @@ def edit_lib():
 					comnd = input()
 				restore_file(libr)
 			exists = True
-		if not exists:
-			print("No library with such name found.")
-
-
-"""
-STARTS HERE:
-"""
+	if not exists:
+		print("No library with such name found.")
 
 def change_lib():
 	global settings
@@ -346,7 +415,7 @@ def restore_lib():
 	global libraries
 	global LIBRARY
 	global yes_no
-	print("Input the name of the *.libt file. Example: 'Queru.libt' . NB: the file should be in the same directory as the app.")
+	print("Input the name of the *.libt file. Example: 'Queru.libt'. NB: the file should be in the same directory as the app.")
 	print("restore_lib >>>\n")
 	filename = input()
 	info = []
@@ -386,7 +455,9 @@ def restore_lib():
 
 
 """
+========================================================================================================================================
 CONSOLE LAUNCHER:
+========================================================================================================================================
 """
 
 def start(command): 
@@ -394,6 +465,7 @@ def start(command):
 	global commands_info
 	global libraries
 	global LIBRARY
+	global word
 	global new_lib_dialog
 	global yes_no
 	global didaction
@@ -402,6 +474,7 @@ def start(command):
 	global restore_lib
 	global restore_file
 	global run_text
+	global word_output
 
 	if command == "help" or command == "Help":
 		print("Here is the list of available commands:")
@@ -413,6 +486,7 @@ def start(command):
 		print(settings.name)
 		print("Statistics library:" , settings.library.name)
 		print("Statistics reliability:" , str(int(settings.library.reliability * 10000) / 100) + "%")
+		print("Words offered:" , str(settings.showwords))
 		print("Machine learning mode:" , settings.autodidact)
 
 	elif command == "libraries":
@@ -445,6 +519,9 @@ def start(command):
 
 	elif command == "edit_lib":
 		edit_lib()
+
+	elif command in {"edit_sets" , "edit_settings"}:
+		edit_sets()
 
 	elif command in {"stop_console" , "close_dialogue" , "quit"}:
 		return(1)
@@ -513,7 +590,13 @@ if len(possible):
 	else:
 		print("You can restore them later by typing 'restore_lib'.")
 
+cloth()
+
 end = 0
 while not end:
 	print("home >>>\n")
 	end = start(input())
+	for btn in buttons:
+		btn.pack()
+
+root.mainloop()
