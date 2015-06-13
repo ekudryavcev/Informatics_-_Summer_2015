@@ -1,7 +1,7 @@
 """
 ========================================================================================================================================
 The Predictive
-Version 1.4.0.beta "Dr Vendetta Beta"
+Version 2.0.0.beta "Dr Ulysses"
 Settings launcher for working with libraries
 ========================================================================================================================================
 """
@@ -16,7 +16,7 @@ class LIBRARY:
 	name = "Default"
 	filename = "default.txt"
 	statistics = {}
-	version = "1.3.5"
+	version = "1.4.0"
 	reliability = 0.0
 	maxwords = 1
 	lock = False
@@ -33,8 +33,8 @@ def restore_file(lib):
 	l.close()
 
 
-version = "1.4.0.beta"
-all_vers = ["1.0.2" , "1.0.3" , "1.1.1" , "1.1.3" , "1.1.4" , "1.1.5" , "1.1.6" , "1.2.0" , "1.2.2" , "1.2.4" , "1.3.0" , "1.3.1" , "1.3.3" , "1.3.4" , "1.3.5" , "1.4.0.beta"]
+version = "2.0.0.beta"
+all_vers = ["1.0.2","1.0.3","1.1.1","1.1.3","1.1.4","1.1.5","1.1.6","1.2.0","1.2.2","1.2.4","1.3.0","1.3.1","1.3.3","1.3.4","1.3.5","1.4.0","2.0.0.beta"]
 lib_def = LIBRARY()
 libraries = [lib_def]
 restore_file(lib_def)
@@ -45,10 +45,10 @@ builtin_libs = ["Smartby_EN" , "Keyloot_EN" , "Queru_EN" , "Walret_PY"]
 
 commands_info = {"'help'" : "list of commands" , "'info'" : "current settings information" , "'new_lib'" : "create a new statistics library"}
 commands_info.update({"'libraries'" : "list of existing statistics libraries" , "'change_lib'" : "change current statistics library"})
-commands_info.update({"'quit'" : "return back" , "'stop_console'" : "stop this console" , "'close_dialogue'" : "stop this console"})
+commands_info.update({"'quit'" : "return back" , "'stop_console', 'close_dialogue'" : "stop this console" , "'edit_settings', 'edit_sets'" : "edit current settings"})
 commands_info.update({"'new_adid'" : "create a new empty *.adid training file" , "'edit_lib'" : "edit statistics library parameters"})
 commands_info.update({"'run_text'" : "run machine learning on a certain text" , "'restore_lib'" : "restore a library from a statistics file"})
-commands_info.update({"'edit_settings'" : "edit current settings"})
+commands_info.update({"'restore_def'" : "restore all built-in libraries"})
 
 from tkinter import *
 root = Tk()
@@ -127,50 +127,6 @@ def yes_no(ansr):
 		print("You should answer in a way, similar to 'Yes'/'No'.")
 		print("yes_no >>>\n")
 		return(yes_no(input()))
-
-def didaction(tex , libr):
-	stats = libr.statistics
-	for i in range(len(tex) - 1):
-		if tex[i] in stats:
-			if tex[i+1] in stats[tex[i]]:
-				stats[tex[i]][tex[i+1]] += 1
-				libr.reliability = 1.0 - (1.0-libr.reliability)*(100 * len(stats) / (100 * len(stats)+3))
-			else:
-				stats[tex[i]][tex[i+1]] = 1
-				libr.reliability = 1.0 - (1.0-libr.reliability)*(50 * len(stats) / (50 * len(stats)+1))
-		else:
-			stats[tex[i]] = {tex[i+1] : 1}
-			libr.reliability = 1.0 - (1.0-libr.reliability)*(30 * len(stats) / (30 * len(stats)+1))
-
-def word_output(word , libr):
-	stats = libr.statistics
-	for vr in stats[word]:
-		best = vr
-		break
-	for vr in stats[word]:
-		if stats[word][vr] > stats[word][best]:
-			best = vr
-	return(best)
-
-def btn_clicked(button , word):
-	global settings
-	global word_output
-	if word in settings.library.statistics:
-		button['text'] = word_output(word, settings.library)
-	else:
-		button['text'] = "..."
-
-def cloth():
-	global word_output
-	global settings
-	global root
-	global buttons
-	global btn_clicked
-	global word
-	for i in range(settings.showwords):
-		new_btn = Button(root)
-		buttons.append(new_btn)
-		new_btn.configure(text="...", command=btn_clicked(new_btn , word))
 
 
 """
@@ -420,6 +376,7 @@ def restore_lib():
 	filename = input()
 	info = []
 	inf = True
+	print(filename + " unpacking...")
 	try:
 		t = open(filename , 'rt')
 		new_lib = LIBRARY()
@@ -451,7 +408,53 @@ def restore_lib():
 		else:
 			print("You may apply it later by typing 'change_lib'.")
 	except IOError or EOFError:
-		print("There is no appropriate *.libt file in the directory. You now will return home.")
+		print("Error: there is no appropriate *.libt file in the directory. You now will return home.")
+
+def didaction(tex , libr):
+	stats = libr.statistics
+	#for i in range(libr.maxwords):
+	for i in range(len(tex) - 1):
+		if tex[i] in stats:
+			if tex[i+1] in stats[tex[i]]:
+				stats[tex[i]][tex[i+1]] += 1
+				libr.reliability = 1.0 - (1.0-libr.reliability)*(100 * len(stats) / (100 * len(stats)+3))
+			else:
+				stats[tex[i]][tex[i+1]] = 1
+				libr.reliability = 1.0 - (1.0-libr.reliability)*(50 * len(stats) / (50 * len(stats)+1))
+		else:
+			stats[tex[i]] = {tex[i+1] : 1}
+			libr.reliability = 1.0 - (1.0-libr.reliability)*(30 * len(stats) / (30 * len(stats)+1))
+
+def word_output(word , libr):
+	stats = libr.statistics
+	for vr in stats[word]:
+		best = vr
+		break
+	for vr in stats[word]:
+		if stats[word][vr] > stats[word][best]:
+			best = vr
+	return(best)
+
+def btn_clicked(button):
+	global settings
+	global word_output
+	global word
+	if word in settings.library.statistics:
+		button['text'] = word_output(word, settings.library)
+	else:
+		button['text'] = "..."
+
+def cloth():
+	global word_output
+	global settings
+	global root
+	global buttons
+	global btn_clicked
+	global word
+	for i in range(settings.showwords):
+		new_btn = Button(root)
+		buttons.append(new_btn)
+		new_btn.configure(text="...", command=btn_clicked(new_btn))
 
 
 """
@@ -464,6 +467,8 @@ def start(command):
 	global settings
 	global commands_info
 	global libraries
+	global version
+	global builtin_libs
 	global LIBRARY
 	global word
 	global new_lib_dialog
@@ -488,8 +493,9 @@ def start(command):
 		print("Statistics reliability:" , str(int(settings.library.reliability * 10000) / 100) + "%")
 		print("Words offered:" , str(settings.showwords))
 		print("Machine learning mode:" , settings.autodidact)
+		print("Version:" , version , "/" , settings.library.version)
 
-	elif command == "libraries":
+	elif command == "libraries" or command == "libs":
 		if len(libraries):
 			print("Here is the list of existing statistics libraries:")
 			for lib in libraries:
@@ -516,6 +522,9 @@ def start(command):
 
 	elif command == "restore_lib":
 		restore_lib()
+
+	elif command == "restore_def":
+		restore_def(builtin_libs)
 
 	elif command == "edit_lib":
 		edit_lib()
@@ -544,59 +553,65 @@ def start(command):
 print("Input command or library word in 'quotes'.")
 print("Type 'help' to see possible commands or 'info' to see current settings.")
 
-possible = []
-for name in builtin_libs:
-	try:
-		t = open(name + ".libt" , 'rt')
-		possible.append(name)
-		t.close()
-	except IOError or EOFError:
-		libr = LIBRARY()
-		libr.name = name
-		libraries.append(libr)
-		restore_file(libr)
+def restore_def(builtin_libs):
+	global LIBRARY
+	global libraries
+	global restore_file
+	global yes_no
+	possible = []
+	for name in builtin_libs:
+		try:
+			t = open(name + ".libt" , 'rt')
+			possible.append(name)
+			t.close()
+		except IOError or EOFError:
+			libr = LIBRARY()
+			libr.name = name
+			libraries.append(libr)
+			restore_file(libr)
+	if len(possible):
+		print("\nThere are " + str(len(possible)) + " built-in libraries in the archive: " , possible , "\nWould you like to restore them?")
+		if yes_no(input()):
+			print("yes_no >>>\n")
+			for name in possible:
+				info = []
+				inf = True
+				print(name + " unpacking...")
+				try:
+					t = open(name + ".libt" , 'rt')
+					new_lib = LIBRARY()
+					new_lib.name = name
+					new_lib.statistics = {}
+					for line in t:
+						if inf:
+							info.extend(line.split())
+							if info[-1] == "info>":
+								inf = False
+						else:
+							new_lib.statistics.update(eval(line))
+					t.close()
+					new_lib.name = info[1]
+					new_lib.version = info[2]
+					new_lib.reliability = float(info[3])
+					new_lib.maxwords = int(info[4])
+					if info[5] == "LOCKED":
+						new_lib.lock = True
+					libraries.append(new_lib)
+					print("Library added.\n")
+				except IOError or EOFError:
+					print("Error\n")
+		else:
+			print("You can restore them later by typing 'restore_lib' or 'restore_def'.")
 
-if len(possible):
-	print("\nThere are " + str(len(possible)) + " built-in libraries in the archive: " , possible , "\nWould you like to restore them?")
-	if yes_no(input()):
-		print("yes_no >>>\n")
-		for name in possible:
-			info = []
-			inf = True
-			print(name + " unpacking...")
-			try:
-				t = open(name + ".libt" , 'rt')
-				new_lib = LIBRARY()
-				new_lib.name = name
-				new_lib.statistics = {}
-				for line in t:
-					if inf:
-						info.extend(line.split())
-						if info[-1] == "info>":
-							inf = False
-					else:
-						new_lib.statistics.update(eval(line))
-				t.close()
-				new_lib.name = info[1]
-				new_lib.version = info[2]
-				new_lib.reliability = float(info[3])
-				new_lib.maxwords = int(info[4])
-				if info[5] == "LOCKED":
-					new_lib.lock = True
-				libraries.append(new_lib)
-				print("Library added.\n")
-			except IOError or EOFError:
-				print("Error\n")
-	else:
-		print("You can restore them later by typing 'restore_lib'.")
+restore_def(builtin_libs)
 
 cloth()
 
 end = 0
 while not end:
-	print("home >>>\n")
-	end = start(input())
 	for btn in buttons:
 		btn.pack()
+	print("home >>>\n")
+	end = start(input())
 
 root.mainloop()
