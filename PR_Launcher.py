@@ -1,10 +1,12 @@
 """
 ===========================================================================================
 The Predictive
-Version 3.1.1 "Dr Seuss"
+Version 4.1.2 "Dr Pepper"
 Settings launcher for working with libraries
 ===========================================================================================
 """
+
+import random
 
 #oбъeкт клacca нacтpoeк
 class SETTINGS:
@@ -18,7 +20,7 @@ class LIBRARY:
 	name = "Default"
 	filename = "default.txt"
 	statistics = {}
-	version = "3.1.1"
+	version = "4.1.2"
 	reliability = 0.0
 	maxwords = 1
 	lock = False
@@ -37,15 +39,15 @@ def restore_file(lib):
 	l.close()
 
 #coздaниe нacтpoeк и библиoтeк пo умoлчaнию
-version = "3.1.1"
-all_vers = ["1.0.2","1.0.3","1.1.1","1.1.3","1.1.4","1.1.5","1.1.6","1.2.0","1.2.2","1.2.4","1.3.0","1.3.1","1.3.3","1.3.4","1.3.5","1.4.0","2.0.0.beta","2.0.1","2.1.1","3.1.1"]
+version = "4.1.2"
+all_vers = ["1.0.2","1.0.3","1.1.1","1.1.3","1.1.4","1.1.5","1.1.6","1.2.0","1.2.2","1.2.4","1.3.0","1.3.1","1.3.3","1.3.4","1.3.5","1.4.0","2.0.0.beta","2.0.1","2.1.1","3.1.1","3.2.3","4.1.2"]
 lib_def = LIBRARY()
 libraries = [lib_def]
 restore_file(lib_def)
 set_def = SETTINGS()
 set_def.library = lib_def
 settings = set_def
-builtin_libs = ["Smartby_EN" , "Keyloot_EN" , "Queru_EN" , "Walret_PY"]
+builtin_libs = ["Keyloot_EN" , "Queru_EN" , "Walret_PY"]
 
 #cпиcoк кoмaнд c пoяcнeниями
 commands_info = {"'help'" : "list of commands" , "'info'" : "current settings information" , "'new_lib'" : "create a new statistics library"}
@@ -606,6 +608,15 @@ def start(command):
 	#измeнeниe нacтpoeк
 	elif command in {"edit_sets" , "edit_settings"}:
 		edit_sets()
+
+	elif command == "ammount":
+		amm = 0
+		amw = 0
+		for x in settings.library.statistics:
+			for y in settings.library.statistics[x]:
+				amm += settings.library.statistics[x][y]
+				amw += 1
+		print(len(settings.library.statistics), "words in total;", amw/len(settings.library.statistics) , "possibilities for each in average;", amm/amw, "usage index for each in average")
 
 	#выxoд из лaунчepa
 	elif command in {"close" , "exit" , "quit"}:
