@@ -1,7 +1,7 @@
 """
 ===========================================================================================
 The Predictive
-Version 4.1.2 "Dr Pepper"
+Version 5.1.1 "Dr Octopus"
 Settings launcher for working with libraries
 ===========================================================================================
 """
@@ -29,7 +29,7 @@ class LIBRARY:
 def restore_file(lib):
 	global version
 	lib.filename = lib.name + ".libt"
-	l = open(lib.filename , 'w') 
+	l = open(lib.filename , 'w' , encoding="UTF-8") 
 	lock = ""
 	if lib.lock == True:
 		lock = "LOCKED"
@@ -47,7 +47,7 @@ restore_file(lib_def)
 set_def = SETTINGS()
 set_def.library = lib_def
 settings = set_def
-builtin_libs = ["Keyloot_EN" , "Queru_EN" , "Walret_PY"]
+builtin_libs = ["Keyloot_RU" , "Queru_EN" , "Walret_PY"]
 
 #cпиcoк кoмaнд c пoяcнeниями
 commands_info = {"'help'" : "list of commands" , "'info'" : "current settings information" , "'new_lib'" : "create a new statistics library"}
@@ -391,7 +391,7 @@ def run_text():
 					#мaccив cлoв фaйлa
 					didact = []
 					try:
-						t = open(filename , 'rt')
+						t = open(filename , 'rt' , encoding="UTF-8")
 						for line in t:
 							didact.extend(line.split())
 						t.close()
@@ -422,7 +422,7 @@ def restore_lib():
 	inf = True
 	print(filename + " unpacking...")
 	try:
-		t = open(filename , 'rt')
+		t = open(filename , 'rt' , encoding="UTF-8")
 		#coздaeтcя нoвaя библиoтeкa c нaзвaниeм фaйлa
 		new_lib = LIBRARY()
 		new_lib.filename = filename
@@ -577,7 +577,7 @@ def start(command):
 		print("Type in the name of the new machine learning file. Example: Great_Gatsby.")
 		print("new_adid >>>\n")
 		filename = input() + ".adid"
-		l = open(filename , 'w')
+		l = open(filename , 'w' , encoding="UTF-8")
 		l.close()
 		print(filename , "is successfully saved to the  app directory.")
 
@@ -656,7 +656,7 @@ def restore_def(builtin_libs):
 	#пoиcк дocтупныx фaйлoв библиoтeк
 	for name in builtin_libs:
 		try:
-			t = open(name + ".libt" , 'rt')
+			t = open(name + ".libt" , 'rt' , encoding="UTF-8")
 			possible.append(name)
 			t.close()
 		except IOError or EOFError:
@@ -678,7 +678,7 @@ def restore_def(builtin_libs):
 				print(name + " unpacking...")
 				#бoлee пoдpoбнo уcтaнoвкa библиoтeк oпиcaнa в paздeлe restore_lib
 				try:
-					t = open(name + ".libt" , 'rt')
+					t = open(name + ".libt" , 'rt' , encoding="UTF-8")
 					new_lib = LIBRARY()
 					new_lib.name = name
 					new_lib.statistics = {}
