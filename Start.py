@@ -1,7 +1,7 @@
 """
 ===========================================================================================
 The Predictive
-Version 4.1.2 "Dr Pepper"
+Version 5.1.1 "Dr Octopus"
 Console
 ===========================================================================================
 """
@@ -58,15 +58,19 @@ def predict1(event):
 		if not btn1['text'] == ". . .":
 			if not list(root_text)[-1] == " ":
 				root_text += " "
+				window.config(state = 'normal')
 				window.insert(END, " ")
+				window.config(state = 'disabled')
 				sys.stdout.write(" ")
 			sys.stdout.write(btn1['text'])
 			sys.stdout.write(" ")
 			sys.stdout.flush()
 		root_text += btn1['text']
+		window.config(state = 'normal')
 		window.insert(END, btn1['text'])
 		root_text += " "
 		window.insert(END, " ")
+		window.config(state = 'disabled')
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -99,15 +103,19 @@ def predict2(event):
 		if not btn2['text'] == ". . .":
 			if not list(root_text)[-1] == " ":
 				root_text += " "
+				window.config(state = 'normal')
 				window.insert(END, " ")
+				window.config(state = 'disabled')
 				sys.stdout.write(" ")
 			sys.stdout.write(btn2['text'])
 			sys.stdout.write(" ")
 			sys.stdout.flush()
 		root_text += btn2['text']
+		window.config(state = 'normal')
 		window.insert(END, btn2['text'])
 		root_text += " "
 		window.insert(END, " ")
+		window.config(state = 'disabled')
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -140,15 +148,19 @@ def predict3(event):
 		if not btn3['text'] == ". . .":
 			if not list(root_text)[-1] == " ":
 				root_text += " "
+				window.config(state = 'normal')
 				window.insert(END, " ")
+				window.config(state = 'disabled')
 				sys.stdout.write(" ")
 			sys.stdout.write(btn3['text'])
 			sys.stdout.write(" ")
 			sys.stdout.flush()
 		root_text += btn3['text']
+		window.config(state = 'normal')
 		window.insert(END, btn3['text'])
 		root_text += " "
 		window.insert(END, " ")
+		window.config(state = 'disabled')
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -181,15 +193,19 @@ def predict4(event):
 		if not btn4['text'] == ". . .":
 			if not list(root_text)[-1] == " ":
 				root_text += " "
+				window.config(state = 'normal')
 				window.insert(END, " ")
+				window.config(state = 'disabled')
 				sys.stdout.write(" ")
 			sys.stdout.write(btn4['text'])
 			sys.stdout.write(" ")
 			sys.stdout.flush()
 		root_text += btn4['text']
+		window.config(state = 'normal')
 		window.insert(END, btn4['text'])
 		root_text += " "
 		window.insert(END, " ")
+		window.config(state = 'disabled')
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -221,14 +237,16 @@ def finish1(event):
 		global settings
 		if not btn1['text'] == ". . .":
 			wr = btn1['text'][len(root_text.split()[-1])::]
+			window.config(state = 'normal')
 			if wr:
 				sys.stdout.write(wr)
 				sys.stdout.write(" ")
 				sys.stdout.flush()
 				root_text += wr
 				window.insert(END, wr)
-			root_text += " "
 			window.insert(END, " ")
+			window.config(state = 'disabled')
+			root_text += " "
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -268,14 +286,16 @@ def finish2(event):
 		global settings
 		if not btn2['text'] == ". . .":
 			wr = btn2['text'][len(root_text.split()[-1])::]
+			window.config(state = 'normal')
 			if wr:
 				sys.stdout.write(wr)
 				sys.stdout.write(" ")
 				sys.stdout.flush()
 				root_text += wr
 				window.insert(END, wr)
-			root_text += " "
 			window.insert(END, " ")
+			window.config(state = 'disabled')
+			root_text += " "
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -315,14 +335,16 @@ def finish3(event):
 		global settings
 		if not btn3['text'] == ". . .":
 			wr = btn3['text'][len(root_text.split()[-1])::]
+			window.config(state = 'normal')
 			if wr:
 				sys.stdout.write(wr)
 				sys.stdout.write(" ")
 				sys.stdout.flush()
 				root_text += wr
 				window.insert(END, wr)
-			root_text += " "
 			window.insert(END, " ")
+			window.config(state = 'disabled')
+			root_text += " "
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -362,14 +384,16 @@ def finish4(event):
 		global settings
 		if not btn4['text'] == ". . .":
 			wr = btn4['text'][len(root_text.split()[-1])::]
+			window.config(state = 'normal')
 			if wr:
 				sys.stdout.write(wr)
 				sys.stdout.write(" ")
 				sys.stdout.flush()
 				root_text += wr
 				window.insert(END, wr)
-			root_text += " "
 			window.insert(END, " ")
+			window.config(state = 'disabled')
+			root_text += " "
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -458,6 +482,7 @@ scroll.grid(row = 3, column = 43, columnspan = 3)
 window.grid(row = 3, column = 1, columnspan = 40)
 scroll.config(command = window.yview)
 window.config(yscrollcommand = scroll.set)
+window.config(state = 'disabled')
 
 def finish(straw):
 	global settings
@@ -480,7 +505,7 @@ def finish(straw):
 			elif trial[1] > best[2][1] and not trial[1] > best[1][1]:
 				best[2] = trial
 			elif trial[1] > best[3][1] and not trial[1] > best[2][1]:
-				best[2] = trial
+				best[3] = trial
 	return([best[0][0], best[1][0], best[2][0], best[3][0]])
 
 def wrkey(event):
@@ -491,15 +516,21 @@ def wrkey(event):
 		root.clipboard_clear()
 		root.clipboard_append(window.get('1.0', 'end'))
 		root_text += "\n"
+		window.config(state = 'normal')
 		window.insert(END, "\n")
+		window.config(state = 'disabled')
 		print("\nText copied to clipboard, use Ctrl+V to paste it later.")
 	elif event.keysym == 'BackSpace':
 		root_text = root_text[:-1]
+		window.config(state = 'normal')
 		window.delete('end-2c')
+		window.config(state = 'disabled')
 	elif event.keysym == 'Return':
 		print("")
 		root_text += "\n"
+		window.config(state = 'normal')
 		window.insert(END, "\n")
+		window.config(state = 'disabled')
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -527,8 +558,12 @@ def wrkey(event):
 		sys.stdout.write(x)
 		if list(root_text)[-1] == " ":
 			root_text = root_text[:-1]+str(x)
+			window.config(state = 'normal')
 			window.delete('end-2c')
+			window.config(state = 'disabled')
+		window.config(state = 'normal')
 		window.insert(END, x)
+		window.config(state = 'disabled')
 		wrd1 = ". . ."
 		wrd2 = ""
 		wrd3 = ""
@@ -556,7 +591,9 @@ def wrkey(event):
 		x = event.char
 		sys.stdout.write(x)
 		root_text += str(x)
+		window.config(state = 'normal')
 		window.insert(END, x)
+		window.config(state = 'disabled')
 		if len(root_text):
 			if list(root_text)[-1] == " ":
 				wrd1 = ". . ."
@@ -618,19 +655,19 @@ def wrmode():
 print("Type 'write' to enter writing mode with 'The Predictive' or type 'launch' to enter launcher mode.")
 print("Type 'exit' or 'quit' to stop this programm.")
 
+command = "write"
 end = 0
 while not end:
-	print("start >>>\n")
-	command = input()
 	if command == "write":
 		print("Press 'Esc' to save current text.")
 		print("Open the Tkinter window to begin.")
 		print("write >>>\n")
 		wrmode()
-		end = 1
 	elif command in {"start", "launch", "settings"}:
 		launch()
 	elif command in {"quit", "exit"}:
 		end = 1
+	print("start >>>\n")
+	command = input()
 
 root.mainloop()
